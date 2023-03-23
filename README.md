@@ -1,3 +1,4 @@
 - [ ] Add APIs
 - [ ] Add MongoDB
+- [ ] Add auth and search
 - [ ] Add Swagger docs
