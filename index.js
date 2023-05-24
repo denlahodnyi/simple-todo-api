@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -6,6 +7,8 @@ const responseTime = require('response-time');
 const rateLimit = require('express-rate-limit');
 const app = express();
 const router = require('./routes');
+const connectDB = require('./db/connect');
+const errorMiddleware = require('./middlewares/errorsMiddleware');
 
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -20,14 +23,27 @@ const apiLimiter = rateLimit({
 // app.use(helmet());
 // adds a X-Response-Time header to responses
 app.use(responseTime());
-// app.use(express.json());
+// for parsing application/json
+app.use(express.json());
+// for parsing application/x-www-form-urlencoded
+app.use(express.urlencoded({ extended: true }));
 // logger
 app.use(morgan('short'));
 
 app.use('/api/v1/tasks', apiLimiter, router, (req, res) => {
   res.status(404).send('Not Found');
 });
+app.use(errorMiddleware);
 
-app.listen(3000, () => {
-  console.log('App is listening on port 3000');
-});
+const start = async () => {
+  try {
+    await connectDB();
+    app.listen(3000, () => {
+      console.log('🚀 App is listening on port 3000');
+    });
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+start();
