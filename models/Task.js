@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const taskSchema = mongoose.Schema(
   {
+    // TODO: add user_id
     title: {
       type: String,
       required: [true, 'Value is required'],

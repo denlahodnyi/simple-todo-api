@@ -8,5 +8,6 @@
 - [ ] Mocks
 - [ ] Tests
 ## Extra
+- [ ] Email verification
 - [ ] API linter (if exists)
 - [ ] Typescript
