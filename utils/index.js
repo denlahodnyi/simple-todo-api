@@ -1,4 +1,15 @@
 const asyncWrapper = require('./asyncWrapper');
-const { CustomError, NotFoundError } = require('./errors');
+const errors = require('./errors');
+const jwtUtils = require('./jwt');
+const validationUtils = require('./validation');
+const passwordUtils = require('./password');
+const throwIfNotAuthorized = require('./throwIfNotAuthorized');
 
-module.exports = { asyncWrapper, CustomError, NotFoundError };
+module.exports = {
+  asyncWrapper,
+  throwIfNotAuthorized,
+  ...errors,
+  ...jwtUtils,
+  ...validationUtils,
+  ...passwordUtils,
+};

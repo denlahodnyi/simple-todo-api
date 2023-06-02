@@ -1,24 +1,32 @@
 const mongoose = require('mongoose');
 const { StatusCodes: SC } = require('http-status-codes');
+const { JsonWebTokenError, TokenExpiredError } = require('../utils');
 
 const parseError = (error) => {
   let code;
-  let message;
+  let message = error?.message;
 
   if (
     error instanceof mongoose.Error.ValidationError ||
-    error instanceof mongoose.Error.ValidatorError
+    error instanceof mongoose.Error.ValidatorError ||
+    error instanceof JsonWebTokenError
   ) {
     code = SC.BAD_REQUEST;
-    message = error.message;
   }
   if (error instanceof mongoose.Error.CastError) {
     code = SC.BAD_REQUEST;
     message = `Invalid \`${error.path}\` field`;
   }
-  if (error?.code) {
+  if (error instanceof mongoose.Error.CastError) {
+    code = SC.BAD_REQUEST;
+    message = `Invalid \`${error.path}\` field`;
+  }
+  if (error instanceof TokenExpiredError) {
+    code = SC.UNAUTHORIZED;
+  }
+  if (error?.code && error.code !== 11000) {
+    // The 11000 code is a duplicate key error
     code = error.code;
-    message = error.message;
   }
 
   return { code, message };
@@ -38,10 +46,10 @@ const formatErrors = (errorsObj) => {
 };
 
 const errorMiddleware = (err, req, res, next) => {
-  console.log('⚠️ ' + err);
+  console.log(`⚠️ ${err}`);
   let { code = SC.INTERNAL_SERVER_ERROR, message = 'Something went wrong!' } =
     parseError(err);
-  let errors = err.errors ? formatErrors(err.errors) : null;
+  const errors = err.errors ? formatErrors(err.errors) : null;
 
   if (errors && Object.keys(errors).length) message = null;
 
