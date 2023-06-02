@@ -28,7 +28,7 @@ class BadRequestError extends CustomError {
 class AccessError extends CustomError {
   constructor(message = 'Sorry, but you have no access to this resource') {
     super(message);
-    this.name = 'ForbiddenError';
+    this.name = 'AccessError';
     this.code = SC.FORBIDDEN;
   }
 }

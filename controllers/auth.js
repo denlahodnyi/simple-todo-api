@@ -1,5 +1,4 @@
 const { StatusCodes: SC } = require('http-status-codes');
-const bcrypt = require('bcrypt');
 const { User } = require('../models/User');
 const { sendUserVerificationMail } = require('../services/email');
 const {
@@ -8,13 +7,13 @@ const {
   verifyToken,
   validatePassword,
   validateEmail,
+  hashPassword,
+  comparePasswords,
   BadRequestError,
   NotFoundError,
   CustomError,
   AccessError,
 } = require('../utils');
-
-const SALT_ROUNDS = 10;
 
 const signin = asyncWrapper(async (req, res) => {
   const { email, password } = req.body;
@@ -32,7 +31,7 @@ const signin = asyncWrapper(async (req, res) => {
     throw new AccessError('Please, verify your user before proceeding');
   }
 
-  const match = await bcrypt.compare(password, user.password);
+  const match = await comparePasswords(password, user.password);
 
   if (!match) {
     throw new BadRequestError('Wrong password');
@@ -55,7 +54,7 @@ const signup = asyncWrapper(async (req, res) => {
     throw new BadRequestError(passwordValidation.message);
   }
 
-  const hash = await bcrypt.hash(password, SALT_ROUNDS);
+  const hash = await hashPassword(password);
   const user = await User.create({ email, password: hash });
   const token = await signToken({ user_id: user._id });
   await sendUserVerificationMail(email, token);
