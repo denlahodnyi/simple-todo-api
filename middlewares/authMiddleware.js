@@ -11,8 +11,9 @@ const authMw = (options) => (req, res, next) => {
 
   if (token) {
     const user = verifyToken(token);
+    req.token = token;
     req.user = user;
-    throwIfNotAuthorized(req);
+    // throwIfNotAuthorized(req);
   }
 
   next();

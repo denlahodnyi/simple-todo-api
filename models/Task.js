@@ -2,7 +2,12 @@ const mongoose = require('mongoose');
 
 const taskSchema = mongoose.Schema(
   {
-    // TODO: add user_id
+    user_id: {
+      type: mongoose.Types.ObjectId,
+      required: true,
+      immutable: true,
+      default: null,
+    },
     title: {
       type: String,
       required: [true, 'Value is required'],
@@ -18,11 +23,20 @@ const taskSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    tag_color: {
+    color: {
       type: String,
       default: null,
       uppercase: true,
       match: [/^#([a-f0-9]{3}|[a-f0-9]{6})$/i, 'Must be a valid HEX color'],
+    },
+    tags: {
+      type: [
+        {
+          type: String,
+          trim: true,
+          maxLength: [20, 'Tag is too long'],
+        },
+      ],
     },
   },
   {

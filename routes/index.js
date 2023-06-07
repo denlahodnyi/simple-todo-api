@@ -1,8 +1,6 @@
 const express = require('express');
 const { resendVerifyLimiter } = require('../middlewares/rateLimiters');
-const { authMw } = require('../middlewares/authMiddleware.js');
-
-const router = express.Router();
+const { authMw } = require('../middlewares/authMiddleware');
 
 const {
   getAllTasks,
@@ -20,8 +18,14 @@ const {
 } = require('../controllers/users');
 const { signin, signup, verify, resendVerify } = require('../controllers/auth');
 
-router.route('/tasks/').get(getAllTasks).post(createTask);
-router.route('/tasks/:id').get(getTask).put(updateTask).delete(deleteTask);
+const router = express.Router();
+
+router.route('/tasks/').get(authMw(), getAllTasks).post(authMw(), createTask);
+router
+  .route('/tasks/:id')
+  .get(authMw(), getTask)
+  .put(authMw(), updateTask)
+  .delete(authMw(), deleteTask);
 
 router.route('/users/').get(authMw({ publicLike: true }), getAllUsers);
 router

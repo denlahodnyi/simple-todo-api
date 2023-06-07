@@ -5,6 +5,7 @@ const {
   validatePassword,
   comparePasswords,
   hashPassword,
+  throwIfNotAuthorized,
   NotFoundError,
   BadRequestError,
 } = require('../utils');
@@ -56,6 +57,8 @@ const getUser = asyncWrapper(async (req, res) => {
 const updateUser = asyncWrapper(async (req, res) => {
   const { password, ...body } = req.body;
 
+  throwIfNotAuthorized(req, req.params.id);
+
   const user = await User.findByIdAndUpdate(req.params.id, body, {
     runValidators: true,
   }).select({
@@ -82,6 +85,9 @@ const updateUserPassword = asyncWrapper(async (req, res) => {
     new_password: newPwd,
     new_password_confirm: newPwdConfirm,
   } = req.body;
+
+  throwIfNotAuthorized(req, req.params.id);
+
   const user = await User.findById(req.params.id).lean();
 
   if (!oldPwd || !newPwd || !newPwdConfirm) {
@@ -115,6 +121,8 @@ const updateUserPassword = asyncWrapper(async (req, res) => {
 });
 
 const deleteUser = asyncWrapper(async (req, res) => {
+  throwIfNotAuthorized(req, req.params.id);
+
   const user = await User.findByIdAndDelete(req.params.id);
 
   if (!user) {
