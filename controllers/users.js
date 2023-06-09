@@ -28,8 +28,7 @@ const getAllUsers = asyncWrapper(async (req, res) => {
 });
 
 const getUser = asyncWrapper(async (req, res) => {
-  const { user_id: userId } = req.user || {};
-  const isOwner = userId === req.params.id;
+  const isOwner = req.user.user_id === req.params.id;
   const projection = {
     user_name: 1,
     avatar_url: 1,
@@ -57,9 +56,9 @@ const getUser = asyncWrapper(async (req, res) => {
 const updateUser = asyncWrapper(async (req, res) => {
   const { password, ...body } = req.body;
 
-  throwIfNotAuthorized(req, req.params.id);
+  throwIfNotAuthorized(req, req.params.user_id);
 
-  const user = await User.findByIdAndUpdate(req.params.id, body, {
+  const user = await User.findByIdAndUpdate(req.params.user_id, body, {
     runValidators: true,
   }).select({
     user_name: 1,
@@ -86,34 +85,31 @@ const updateUserPassword = asyncWrapper(async (req, res) => {
     new_password_confirm: newPwdConfirm,
   } = req.body;
 
-  throwIfNotAuthorized(req, req.params.id);
+  throwIfNotAuthorized(req, req.params.user_id);
 
-  const user = await User.findById(req.params.id).lean();
+  const user = await User.findById(req.params.user_id).lean();
 
   if (!oldPwd || !newPwd || !newPwdConfirm) {
     throw new BadRequestError('Please, provide all data');
   }
   if (newPwd !== newPwdConfirm) {
-    // @TODO: throw 422?
     throw new BadRequestError("Passwords don't match");
   }
 
   const match = await comparePasswords(oldPwd, user.password);
 
   if (!match) {
-    // @TODO: throw 422?
     throw new BadRequestError('Wrong current password');
   }
 
   const passwordValidation = validatePassword(newPwd);
 
   if (!passwordValidation.valid) {
-    // @TODO: throw 422?
     throw new BadRequestError(passwordValidation.message);
   }
 
   const hash = await hashPassword(newPwd);
-  const updatedUser = await User.findByIdAndUpdate(req.params.id, {
+  const updatedUser = await User.findByIdAndUpdate(req.params.user_id, {
     password: hash,
   });
 
@@ -121,9 +117,9 @@ const updateUserPassword = asyncWrapper(async (req, res) => {
 });
 
 const deleteUser = asyncWrapper(async (req, res) => {
-  throwIfNotAuthorized(req, req.params.id);
+  throwIfNotAuthorized(req, req.params.user_id);
 
-  const user = await User.findByIdAndDelete(req.params.id);
+  const user = await User.findByIdAndDelete(req.params.user_id);
 
   if (!user) {
     throw new NotFoundError(NOT_FOUND_MESSAGE);

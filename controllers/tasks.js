@@ -14,7 +14,7 @@ const getAllTasks = asyncWrapper(async (req, res) => {
 
 const getTask = asyncWrapper(async (req, res) => {
   const task = await Task.findOne({
-    _id: req.params.id,
+    _id: req.params.task_id,
     user_id: req.user.user_id,
   }).lean();
 
@@ -28,7 +28,10 @@ const getTask = asyncWrapper(async (req, res) => {
 });
 
 const createTask = asyncWrapper(async (req, res) => {
-  const task = await Task.create({ ...req.body, user_id: req.user.user_id });
+  const task = await Task.create({
+    ...req.body,
+    user_id: req.user.user_id,
+  });
   res.status(SC.CREATED).send({
     data: { task },
   });
@@ -36,7 +39,7 @@ const createTask = asyncWrapper(async (req, res) => {
 
 const updateTask = asyncWrapper(async (req, res) => {
   const task = await Task.findOneAndUpdate(
-    { _id: req.params.id, user_id: req.user.user_id },
+    { _id: req.params.task_id, user_id: req.user.user_id },
     req.body,
     {
       new: true, // return the modified document rather than the original
@@ -55,7 +58,7 @@ const updateTask = asyncWrapper(async (req, res) => {
 
 const deleteTask = asyncWrapper(async (req, res) => {
   const task = await Task.findOneAndDelete({
-    _id: req.params.id,
+    _id: req.params.task_id,
     user_id: req.user.user_id,
   });
 

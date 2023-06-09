@@ -47,9 +47,10 @@ const formatErrors = (errorsObj) => {
 
 const errorMiddleware = (err, req, res, next) => {
   console.log(`⚠️ ${err}`);
-  let { code = SC.INTERNAL_SERVER_ERROR, message = 'Something went wrong!' } =
-    parseError(err);
+  const parsedErr = parseError(err);
+  const code = parsedErr.code || SC.INTERNAL_SERVER_ERROR;
   const errors = err.errors ? formatErrors(err.errors) : null;
+  let message = parsedErr.message || 'Something went wrong!';
 
   if (errors && Object.keys(errors).length) message = null;
 

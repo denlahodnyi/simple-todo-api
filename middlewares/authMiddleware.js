@@ -1,4 +1,4 @@
-const { verifyToken, throwIfNotAuthorized, AuthError } = require('../utils');
+const { verifyToken, AuthError } = require('../utils');
 
 const authMw = (options) => (req, res, next) => {
   const { publicLike = false } = options || {};
@@ -13,7 +13,6 @@ const authMw = (options) => (req, res, next) => {
     const user = verifyToken(token);
     req.token = token;
     req.user = user;
-    // throwIfNotAuthorized(req);
   }
 
   next();

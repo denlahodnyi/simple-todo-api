@@ -22,18 +22,18 @@ const router = express.Router();
 
 router.route('/tasks/').get(authMw(), getAllTasks).post(authMw(), createTask);
 router
-  .route('/tasks/:id')
+  .route('/tasks/:task_id')
   .get(authMw(), getTask)
   .put(authMw(), updateTask)
   .delete(authMw(), deleteTask);
 
 router.route('/users/').get(authMw({ publicLike: true }), getAllUsers);
 router
-  .route('/users/:id')
+  .route('/users/:user_id')
   .get(authMw({ publicLike: true }), getUser)
   .patch(authMw(), updateUser)
   .delete(authMw(), deleteUser);
-router.route('/users/:id/password').patch(authMw(), updateUserPassword);
+router.route('/users/:user_id/password').patch(authMw(), updateUserPassword);
 
 router.route('/auth/signin').post(signin);
 router.route('/auth/signup').post(signup);
