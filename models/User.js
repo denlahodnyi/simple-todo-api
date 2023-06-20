@@ -37,6 +37,7 @@ const UserSchema = mongoose.Schema(
     user_name: {
       type: String,
       index: {
+        type: 'text',
         unique: true,
         partialFilterExpression: { user_name: { $type: 'string' } },
       },

@@ -3,6 +3,7 @@
 - [x] Add resources
 - [x] Connect MongoDB
 - [ ] Add search, filters
+- [ ] Add pagination
 - [x] Add auth
 - [ ] Add Swagger docs
 - [ ] Mocks

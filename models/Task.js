@@ -10,6 +10,9 @@ const taskSchema = mongoose.Schema(
     },
     title: {
       type: String,
+      index: {
+        type: 'text',
+      },
       required: [true, 'Value is required'],
       trim: true,
       maxLength: [35, 'Title is too long'],

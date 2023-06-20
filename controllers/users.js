@@ -6,24 +6,55 @@ const {
   comparePasswords,
   hashPassword,
   throwIfNotAuthorized,
+  getPaginationLinks,
+  getRequestUrl,
   NotFoundError,
   BadRequestError,
 } = require('../utils');
 
 const NOT_FOUND_MESSAGE = 'User not found';
+const LIMIT = 10;
 
 // @TODO: add password reset
 
 const getAllUsers = asyncWrapper(async (req, res) => {
+  const { sort = '', user_name: userName } = req.query;
+  const { origin, pathname } = getRequestUrl(req);
+  const uri = origin + pathname;
+  const page = Number(req.query.page || 1);
+  const limit = req.query.limit || LIMIT;
+  const offset = (page - 1) * limit;
+  const sortQuery = sort.split(', ').join(' ');
+  const filterBy = {};
   const projection = {
     user_name: 1,
     avatar_url: 1,
     createdAt: 1,
     updatedAt: 1,
   };
-  const users = await User.find({}, projection).lean();
+
+  if (userName) filterBy.user_name = userName;
+
+  const query = User.find({ ...filterBy }, projection);
+  const totalItems = await query.clone().countDocuments().lean();
+  const users = await query.skip(offset).limit(limit).sort(sortQuery).lean();
+  const totalPages = Math.ceil(totalItems / limit);
+
   res.status(SC.OK).send({
-    data: { users },
+    data: {
+      users,
+      pagination: {
+        totalItems,
+        totalPages,
+        page,
+        ...getPaginationLinks({
+          uri,
+          page,
+          limit,
+          totalPages,
+        }),
+      },
+    },
   });
 });
 
