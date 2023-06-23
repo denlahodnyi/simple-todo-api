@@ -17,10 +17,6 @@ const parseError = (error) => {
     code = SC.BAD_REQUEST;
     message = `Invalid \`${error.path}\` field`;
   }
-  if (error instanceof mongoose.Error.CastError) {
-    code = SC.BAD_REQUEST;
-    message = `Invalid \`${error.path}\` field`;
-  }
   if (error instanceof TokenExpiredError) {
     code = SC.UNAUTHORIZED;
   }

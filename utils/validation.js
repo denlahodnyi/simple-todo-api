@@ -24,7 +24,10 @@ const validatePassword = (password) => {
 
 const validateEmail = (email) => validator.isEmail(email);
 
+const validateUsername = (username) => /^\w*$/i.test(username);
+
 module.exports = {
   validatePassword,
   validateEmail,
+  validateUsername,
 };

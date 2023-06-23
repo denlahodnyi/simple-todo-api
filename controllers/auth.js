@@ -2,17 +2,18 @@ const { StatusCodes: SC } = require('http-status-codes');
 const { User } = require('../models/User');
 const { sendUserVerificationMail } = require('../services/email');
 const {
-  asyncWrapper,
-  signToken,
-  verifyToken,
-  validatePassword,
-  validateEmail,
-  hashPassword,
-  comparePasswords,
-  BadRequestError,
-  NotFoundError,
-  CustomError,
   AccessError,
+  BadRequestError,
+  CustomError,
+  NotFoundError,
+  asyncWrapper,
+  comparePasswords,
+  generateUsername,
+  hashPassword,
+  signToken,
+  validateEmail,
+  validatePassword,
+  verifyToken,
 } = require('../utils');
 
 const signin = asyncWrapper(async (req, res) => {
@@ -55,10 +56,14 @@ const signup = asyncWrapper(async (req, res) => {
   }
 
   const hash = await hashPassword(password);
-  const user = await User.create({ email, password: hash });
+  const user = await User.create({
+    email,
+    password: hash,
+    user_name: generateUsername(email),
+  });
   const token = await signToken({ user_id: user._id });
   await sendUserVerificationMail(email, token);
-  res.status(SC.OK).send({ data: { status: 'success' } });
+  res.status(SC.CREATED).send({ data: { status: 'success' } });
 });
 
 const verify = asyncWrapper(async (req, res) => {

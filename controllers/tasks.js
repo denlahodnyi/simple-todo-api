@@ -87,9 +87,11 @@ const createTask = asyncWrapper(async (req, res) => {
 });
 
 const updateTask = asyncWrapper(async (req, res) => {
+  const { _id, ...body } = req.body;
+
   const task = await Task.findOneAndUpdate(
     { _id: req.params.task_id, user_id: req.user.user_id },
-    req.body,
+    body,
     {
       new: true, // return the modified document rather than the original
       runValidators: true,

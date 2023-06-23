@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const { StatusCodes: SC } = require('http-status-codes');
-const { CustomError, validateEmail } = require('../utils');
+const { CustomError, validateEmail, validateUsername } = require('../utils');
+const { USERNAME_LENGTH } = require('../config');
 
 const UserSchema = mongoose.Schema(
   {
@@ -42,6 +43,18 @@ const UserSchema = mongoose.Schema(
         partialFilterExpression: { user_name: { $type: 'string' } },
       },
       trim: true,
+      minLength: [
+        3,
+        `Username is too short. At least 3 characters are required`,
+      ],
+      maxLength: [
+        USERNAME_LENGTH,
+        `Username is too long. Only ${USERNAME_LENGTH} characters are allowed`,
+      ],
+      validate: {
+        validator: (val) => validateUsername(val),
+        message: 'Username must only contain letters, numbers, and underscores',
+      },
       default: null,
     },
     avatar_url: {
@@ -55,7 +68,7 @@ const UserSchema = mongoose.Schema(
   }
 );
 
-UserSchema.post('save', (error, doc, next) => {
+UserSchema.post(/save|update/i, (error, doc, next) => {
   if (error.name === 'MongoServerError' && error.code === 11000) {
     if (error.keyPattern.email) {
       next(new CustomError('User already exists', SC.CONFLICT));

@@ -2,8 +2,8 @@
 ## Main
 - [x] Add resources
 - [x] Connect MongoDB
-- [ ] Add search, filters
-- [ ] Add pagination
+- [x] Add search, filters
+- [x] Add pagination
 - [x] Add auth
 - [ ] Add Swagger docs
 - [ ] Mocks
@@ -11,6 +11,6 @@
 ## Extra
 - [x] Email verification
 - [ ] Password reset
-- [ ] Generate user_name
+- [x] Generate user_name
 - [ ] API linter (if exists)
 - [ ] Typescript

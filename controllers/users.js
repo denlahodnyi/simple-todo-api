@@ -85,11 +85,12 @@ const getUser = asyncWrapper(async (req, res) => {
 });
 
 const updateUser = asyncWrapper(async (req, res) => {
-  const { password, ...body } = req.body;
+  const { _id, password, ...body } = req.body;
 
   throwIfNotAuthorized(req, req.params.user_id);
 
   const user = await User.findByIdAndUpdate(req.params.user_id, body, {
+    new: true, // return the modified document rather than the original
     runValidators: true,
   }).select({
     user_name: 1,
@@ -155,6 +156,8 @@ const deleteUser = asyncWrapper(async (req, res) => {
   if (!user) {
     throw new NotFoundError(NOT_FOUND_MESSAGE);
   }
+
+  // TODO: delete related tasks
 
   res.status(SC.OK).send({ data: { user } });
 });
