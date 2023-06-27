@@ -1,5 +1,7 @@
+const fs = require('fs/promises');
 const { StatusCodes: SC } = require('http-status-codes');
 const { User } = require('../models/User');
+const { UserAvatar } = require('../models/UserAvatar');
 const {
   asyncWrapper,
   validatePassword,
@@ -26,16 +28,11 @@ const getAllUsers = asyncWrapper(async (req, res) => {
   const offset = (page - 1) * limit;
   const sortQuery = sort.split(', ').join(' ');
   const filterBy = {};
-  const projection = {
-    user_name: 1,
-    avatar_url: 1,
-    createdAt: 1,
-    updatedAt: 1,
-  };
 
   if (userName) filterBy.user_name = userName;
 
-  const query = User.find({ ...filterBy }, projection);
+  // const query = User.find({ ...filterBy }, DISABLED_PRIVATE_USER_FIELDS);
+  const query = User.find({ ...filterBy }).excludePrivateFields();
   const totalItems = await query.clone().countDocuments().lean();
   const users = await query.skip(offset).limit(limit).sort(sortQuery).lean();
   const totalPages = Math.ceil(totalItems / limit);
@@ -59,23 +56,10 @@ const getAllUsers = asyncWrapper(async (req, res) => {
 });
 
 const getUser = asyncWrapper(async (req, res) => {
-  const isOwner = req.user.user_id === req.params.id;
-  const projection = {
-    user_name: 1,
-    avatar_url: 1,
-    createdAt: 1,
-    updatedAt: 1,
-  };
-
-  if (isOwner)
-    Object.assign(projection, {
-      email: 1,
-      first_name: 1,
-      last_name: 1,
-      verified: 1,
-    });
-
-  const user = await User.findById(req.params.id, projection).lean();
+  const isOwner = req.user?.user_id === req.params.user_id;
+  const query = User.findById(req.params.user_id);
+  if (!isOwner) query.excludePrivateFields();
+  const user = await query.lean();
 
   if (!user) {
     throw new NotFoundError(NOT_FOUND_MESSAGE);
@@ -84,28 +68,71 @@ const getUser = asyncWrapper(async (req, res) => {
   res.status(SC.OK).send({ data: { user } });
 });
 
+const getUserAvatar = asyncWrapper(async (req, res) => {
+  const avatar = await UserAvatar.findOne({
+    _id: req.params.avatar_id,
+    user_id: req.params.user_id,
+  });
+
+  if (!avatar) {
+    throw new NotFoundError('No avatar found for current user');
+  }
+
+  res.set('Content-Type', avatar.type);
+  res.status(SC.OK).send(avatar.data);
+});
+
 const updateUser = asyncWrapper(async (req, res) => {
-  const { _id, password, ...body } = req.body;
+  const { _id, password, verified, ...body } = req.body;
 
   throwIfNotAuthorized(req, req.params.user_id);
 
   const user = await User.findByIdAndUpdate(req.params.user_id, body, {
     new: true, // return the modified document rather than the original
     runValidators: true,
-  }).select({
-    user_name: 1,
-    avatar_url: 1,
-    createdAt: 1,
-    updatedAt: 1,
-    email: 1,
-    first_name: 1,
-    last_name: 1,
-    verified: 1,
   });
 
   if (!user) {
     throw new NotFoundError(NOT_FOUND_MESSAGE);
   }
+
+  res.status(SC.OK).send({ data: { user } });
+});
+
+const updateUserAvatar = asyncWrapper(async (req, res) => {
+  throwIfNotAuthorized(req, req.params.user_id);
+  const { origin, pathname } = getRequestUrl(req);
+  const uri = origin + pathname.replace('/upload', '');
+  const buffer = await fs.readFile(req.file.path);
+  const body = {
+    data: buffer,
+    user_id: req.params.user_id,
+    type: req.file.mimetype,
+    name: req.file.filename,
+  };
+
+  const user = await User.findById(req.params.user_id);
+
+  if (!user) {
+    throw new NotFoundError(NOT_FOUND_MESSAGE);
+  }
+
+  let avatar = await UserAvatar.findOneAndReplace(
+    { user_id: req.params.user_id },
+    body,
+    {
+      new: true, // return the modified document rather than the original
+      runValidators: true,
+    }
+  );
+
+  if (!avatar) {
+    avatar = await UserAvatar.create(body);
+  }
+
+  user.avatar_url = `${uri}/${avatar._id}`;
+  user.save(); // update user avatar_url
+  fs.unlink(req.file.path); // remove file from /uploads
 
   res.status(SC.OK).send({ data: { user } });
 });
@@ -119,7 +146,7 @@ const updateUserPassword = asyncWrapper(async (req, res) => {
 
   throwIfNotAuthorized(req, req.params.user_id);
 
-  const user = await User.findById(req.params.user_id).lean();
+  const user = await User.findById(req.params.user_id, '+password').lean();
 
   if (!oldPwd || !newPwd || !newPwdConfirm) {
     throw new BadRequestError('Please, provide all data');
@@ -157,15 +184,17 @@ const deleteUser = asyncWrapper(async (req, res) => {
     throw new NotFoundError(NOT_FOUND_MESSAGE);
   }
 
-  // TODO: delete related tasks
+  // TODO: delete related tasks and avatars
 
   res.status(SC.OK).send({ data: { user } });
 });
 
 module.exports = {
+  deleteUser,
   getAllUsers,
   getUser,
+  getUserAvatar,
   updateUser,
-  deleteUser,
+  updateUserAvatar,
   updateUserPassword,
 };

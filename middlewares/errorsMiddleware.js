@@ -1,15 +1,18 @@
 const mongoose = require('mongoose');
 const { StatusCodes: SC } = require('http-status-codes');
+const { MulterError } = require('multer');
 const { JsonWebTokenError, TokenExpiredError } = require('../utils');
 
 const parseError = (error) => {
-  let code;
+  let code = error?.code;
   let message = error?.message;
 
   if (
     error instanceof mongoose.Error.ValidationError ||
     error instanceof mongoose.Error.ValidatorError ||
-    error instanceof JsonWebTokenError
+    error instanceof JsonWebTokenError ||
+    error instanceof MulterError ||
+    error.code === 11000 // The 11000 code is a duplicate key error
   ) {
     code = SC.BAD_REQUEST;
   }
@@ -19,10 +22,6 @@ const parseError = (error) => {
   }
   if (error instanceof TokenExpiredError) {
     code = SC.UNAUTHORIZED;
-  }
-  if (error?.code && error.code !== 11000) {
-    // The 11000 code is a duplicate key error
-    code = error.code;
   }
 
   return { code, message };

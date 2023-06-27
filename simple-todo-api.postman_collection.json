@@ -1,0 +1,689 @@
+{
+	"info": {
+		"_postman_id": "837eb22f-1fa3-4826-84b1-49200ba70594",
+		"name": "simple-todo-api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20262551"
+	},
+	"item": [
+		{
+			"name": "tasks",
+			"item": [
+				{
+					"name": "Get all tasks",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{URI}}/tasks",
+							"host": [
+								"{{URI}}"
+							],
+							"path": [
+								"tasks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all tasks (with sorting, filtering)",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{URI}}/tasks?page=1",
+							"host": [
+								"{{URI}}"
+							],
+							"path": [
+								"tasks"
+							],
+							"query": [
+								{
+									"key": "title",
+									"value": "cacao",
+									"disabled": true
+								},
+								{
+									"key": "completed",
+									"value": "true",
+									"disabled": true
+								},
+								{
+									"key": "color",
+									"value": "%23EE82EE",
+									"disabled": true
+								},
+								{
+									"key": "sort",
+									"value": "-createdAt",
+									"disabled": true
+								},
+								{
+									"key": "tags",
+									"value": "(chores)",
+									"disabled": true
+								},
+								{
+									"key": "tags_include",
+									"value": "(relax, chores)",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get task",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URI}}/tasks/:task_id",
+							"host": [
+								"{{URI}}"
+							],
+							"path": [
+								"tasks",
+								":task_id"
+							],
+							"variable": [
+								{
+									"key": "task_id",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create task",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Cacao time\",\n    \"description\": \"Make cacao with cookies\",\n    \"tags\": [\"relax\", \"cooking\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URI}}/tasks",
+							"host": [
+								"{{URI}}"
+							],
+							"path": [
+								"tasks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update task",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"tags\": [\"cooking\", \"relax\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URI}}/tasks/:task_id",
+							"host": [
+								"{{URI}}"
+							],
+							"path": [
+								"tasks",
+								":task_id"
+							],
+							"variable": [
+								{
+									"key": "task_id",
+									"value": "646de2905f9c6edaecce8195"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete task",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URI}}/tasks/:task_id",
+							"host": [
+								"{{URI}}"
+							],
+							"path": [
+								"tasks",
+								":task_id"
+							],
+							"variable": [
+								{
+									"key": "task_id",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "users",
+			"item": [
+				{
+					"name": "Get all users",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{URI}}/users?page=1",
+							"host": [
+								"{{URI}}"
+							],
+							"path": [
+								"users"
+							],
+							"query": [
+								{
+									"key": "sort",
+									"value": "-createdAt",
+									"disabled": true
+								},
+								{
+									"key": "user_name",
+									"value": "someUser",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "1",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get user (with auth)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URI}}/users/:user_id",
+							"host": [
+								"{{URI}}"
+							],
+							"path": [
+								"users",
+								":user_id"
+							],
+							"variable": [
+								{
+									"key": "user_id",
+									"value": "64762216fcf269e866dbbda7"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get user (public)",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URI}}/users/:user_id",
+							"host": [
+								"{{URI}}"
+							],
+							"path": [
+								"users",
+								":user_id"
+							],
+							"variable": [
+								{
+									"key": "user_id",
+									"value": "64762216fcf269e866dbbda7"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user_name\": \"BaTmAn_111\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URI}}/users/:user_id",
+							"host": [
+								"{{URI}}"
+							],
+							"path": [
+								"users",
+								":user_id"
+							],
+							"variable": [
+								{
+									"key": "user_id",
+									"value": "64762216fcf269e866dbbda7"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update user password",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"old_password\": \"Qwerty1234\",\n    \"new_password\": \"Qwerty123\",\n    \"new_password_confirm\": \"Qwerty123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URI}}/users/:user_id/password",
+							"host": [
+								"{{URI}}"
+							],
+							"path": [
+								"users",
+								":user_id",
+								"password"
+							],
+							"variable": [
+								{
+									"key": "user_id",
+									"value": "64762216fcf269e866dbbda7"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URI}}/users/:user_id",
+							"host": [
+								"{{URI}}"
+							],
+							"path": [
+								"users",
+								":user_id"
+							],
+							"variable": [
+								{
+									"key": "user_id",
+									"value": "6495780ad012ba8a4541a61d"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Save user avatar",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "avatar",
+									"type": "file",
+									"src": "/Users/den/Pictures/logos/4.jpeg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URI}}/users/:user_id/avatars/upload",
+							"host": [
+								"{{URI}}"
+							],
+							"path": [
+								"users",
+								":user_id",
+								"avatars",
+								"upload"
+							],
+							"variable": [
+								{
+									"key": "user_id",
+									"value": "64762216fcf269e866dbbda7"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "signup",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"// pm.test(\"Token presence\", function () {",
+									"//     var jsonData = pm.response.json();",
+									"//     pm.expect(jsonData.data.token).to.exist;",
+									"//     if (jsonData.data.token) pm.environment.set(\"TOKEN\", jsonData.data.token);",
+									"// });"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"devdev3@gmail.com\",\n    \"password\": \"Qwerty123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URI}}/auth/signup",
+							"host": [
+								"{{URI}}"
+							],
+							"path": [
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "signin",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Token presence\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data.token).to.exist;",
+									"    if (jsonData.data.token) pm.environment.set(\"TOKEN\", jsonData.data.token);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"{{USER_1_EMAIL}}\",\n    \"password\": \"{{USER_1_PWD}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URI}}/auth/signin",
+							"host": [
+								"{{URI}}"
+							],
+							"path": [
+								"auth",
+								"signin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "verify",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URI}}/auth/verify?token=foobar",
+							"host": [
+								"{{URI}}"
+							],
+							"path": [
+								"auth",
+								"verify"
+							],
+							"query": [
+								{
+									"key": "token",
+									"value": "foobar"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "send-verify-mail",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"devdev2@gmail.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URI}}/auth/send-verify",
+							"host": [
+								"{{URI}}"
+							],
+							"path": [
+								"auth",
+								"send-verify"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

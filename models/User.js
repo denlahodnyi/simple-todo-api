@@ -18,6 +18,7 @@ const UserSchema = mongoose.Schema(
     },
     password: {
       type: String,
+      select: false,
       required: [true, 'Password is required'],
       trim: true,
     },
@@ -29,11 +30,15 @@ const UserSchema = mongoose.Schema(
       type: String,
       trim: true,
       default: null,
+      minLength: 2,
+      maxLength: 50,
     },
     last_name: {
       type: String,
       trim: true,
       default: null,
+      minLength: 2,
+      maxLength: 50,
     },
     user_name: {
       type: String,
@@ -65,6 +70,18 @@ const UserSchema = mongoose.Schema(
   {
     timestamps: true,
     versionKey: false,
+    query: {
+      // query helpers
+      excludePrivateFields() {
+        // password is excluded by default
+        return this.select([
+          '-email',
+          '-first_name',
+          '-last_name',
+          '-verified',
+        ]);
+      },
+    },
   }
 );
 

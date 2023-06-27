@@ -23,7 +23,7 @@ const signin = asyncWrapper(async (req, res) => {
     throw new BadRequestError('Please, provide email and password');
   }
 
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email }, '+password');
 
   if (!user) {
     throw new NotFoundError("User doesn't exist");
