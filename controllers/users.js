@@ -178,13 +178,12 @@ const updateUserPassword = asyncWrapper(async (req, res) => {
 const deleteUser = asyncWrapper(async (req, res) => {
   throwIfNotAuthorized(req, req.params.user_id);
 
+  // related docs will be removed at scheme level
   const user = await User.findByIdAndDelete(req.params.user_id);
 
   if (!user) {
     throw new NotFoundError(NOT_FOUND_MESSAGE);
   }
-
-  // TODO: delete related tasks and avatars
 
   res.status(SC.OK).send({ data: { user } });
 });

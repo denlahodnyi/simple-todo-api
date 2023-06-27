@@ -42,7 +42,7 @@ if (USE_ETHEREAL_HOST === 'true') {
 const logTestMessageUrl = (result) => {
   if (MAIL_HOST === ETHEREAL_HOST || USE_ETHEREAL_HOST === 'true') {
     console.log(
-      `Preview email test URL: ${nodemailer.getTestMessageUrl(result)}`
+      `📬 Preview email test URL: ${nodemailer.getTestMessageUrl(result)}`
     );
   }
 };

@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 const { StatusCodes: SC } = require('http-status-codes');
 const { CustomError, validateEmail, validateUsername } = require('../utils');
 const { USERNAME_LENGTH } = require('../config');
+const Task = require('./Task');
+const { UserAvatar } = require('./UserAvatar');
 
 const UserSchema = mongoose.Schema(
   {
@@ -84,6 +86,20 @@ const UserSchema = mongoose.Schema(
     },
   }
 );
+
+UserSchema.post(/delete/i, { query: true, document: false }, async function () {
+  const filter = this.getFilter();
+
+  if (filter._id) {
+    // Delete all tasks and avatars for removed user
+    const deletedTasks = await Task.deleteMany({ user_id: filter._id });
+    console.log(`🚮 Successfully deleted ${deletedTasks.deletedCount} tasks`);
+    const deletedAvatars = await UserAvatar.deleteMany({ user_id: filter._id });
+    console.log(
+      `🚮 Successfully deleted ${deletedAvatars.deletedCount} avatars`
+    );
+  }
+});
 
 UserSchema.post(/save|update/i, (error, doc, next) => {
   if (error.name === 'MongoServerError' && error.code === 11000) {
