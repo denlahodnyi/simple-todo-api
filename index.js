@@ -24,7 +24,9 @@ app.use(express.json());
 // for parsing application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
 // logger
-app.use(morgan('short'));
+app.use(
+  morgan('-> :method :url :status :res[content-length] – :response-time ms')
+);
 
 app.use(`/api/v1/`, apiLimiter, router, (req, res) => {
   res.status(404).send('Not Found');

@@ -47,7 +47,11 @@ const logTestMessageUrl = (result) => {
   }
 };
 
-const sendUserVerificationMail = async (email, token) => {
+const sendUserVerificationMail = async (
+  email,
+  token,
+  pathname = '/auth/verify'
+) => {
   const message = {
     from: `Den <${SENDER_EMAIL}>`,
     to: email,
@@ -56,7 +60,30 @@ const sendUserVerificationMail = async (email, token) => {
       <h1>Thank you for your registration</h1>
       <p>Please confirm your email address</p>
       <div>
-        <a href="${BASE_URL}/v1/auth/verify?token=${token}">Link</a>
+        <a href="${BASE_URL}${pathname}?token=${token}">Link</a>
+      </div>
+    `,
+  };
+
+  const info = await transporter.sendMail(message);
+  logTestMessageUrl(info);
+  return info;
+};
+
+const sendPasswordResetMail = async (
+  email,
+  token,
+  pathname = '/password-reset'
+) => {
+  const message = {
+    from: `Den <${SENDER_EMAIL}>`,
+    to: email,
+    subject: 'Password reset',
+    html: `
+      <h1>We have received your password reset request</h1>
+      <p>Please, follow this link and enter new password</p>
+      <div>
+        <a href="${BASE_URL}${pathname}?token=${token}">Link</a>
       </div>
     `,
   };
@@ -68,4 +95,5 @@ const sendUserVerificationMail = async (email, token) => {
 
 module.exports = {
   sendUserVerificationMail,
+  sendPasswordResetMail,
 };

@@ -18,6 +18,7 @@ const {
   getAllUsers,
   getUser,
   getUserAvatar,
+  resetPassword,
   updateUser,
   updateUserAvatar,
   updateUserPassword,
@@ -84,6 +85,9 @@ router.route('/users/:user_id/avatars/:avatar_id').get(getUserAvatar);
 router
   .route('/users/:user_id/avatars/upload')
   .put(authMw(), avatarUpload.single('avatar'), updateUserAvatar);
+
+// Password reset
+router.route('/password-reset').post(resetPassword);
 
 // Registration routes
 router.route('/auth/signin').post(signin);

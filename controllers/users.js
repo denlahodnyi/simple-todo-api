@@ -2,22 +2,23 @@ const fs = require('fs/promises');
 const { StatusCodes: SC } = require('http-status-codes');
 const { User } = require('../models/User');
 const { UserAvatar } = require('../models/UserAvatar');
+const { sendPasswordResetMail } = require('../services/email');
 const {
+  BadRequestError,
+  NotFoundError,
   asyncWrapper,
-  validatePassword,
   comparePasswords,
-  hashPassword,
-  throwIfNotAuthorized,
   getPaginationLinks,
   getRequestUrl,
-  NotFoundError,
-  BadRequestError,
+  hashPassword,
+  signToken,
+  throwIfNotAuthorized,
+  validatePassword,
+  verifyToken,
 } = require('../utils');
 
 const NOT_FOUND_MESSAGE = 'User not found';
 const LIMIT = 10;
-
-// @TODO: add password reset
 
 const getAllUsers = asyncWrapper(async (req, res) => {
   const { sort = '', user_name: userName } = req.query;
@@ -188,11 +189,45 @@ const deleteUser = asyncWrapper(async (req, res) => {
   res.status(SC.OK).send({ data: { user } });
 });
 
+const resetPassword = asyncWrapper(async (req, res) => {
+  const { token } = req.query;
+  const { email, password: newPassword } = req.body;
+
+  if (token) {
+    const { user_id: userId } = verifyToken(token);
+    const user = await User.findById(userId);
+    if (!user) throw new NotFoundError(NOT_FOUND_MESSAGE);
+    if (!newPassword) throw BadRequestError('Please, provide new password');
+
+    const passwordValidation = validatePassword(newPassword);
+
+    if (!passwordValidation.valid) {
+      throw new BadRequestError(passwordValidation.message);
+    }
+
+    const hash = await hashPassword(newPassword);
+
+    await User.findByIdAndUpdate(userId, {password: hash})
+    res.status(SC.OK).send({data:{status:'success', message: 'Password was successfully updated'}})
+  } else {
+    if (!email) throw new BadRequestError('Please, provide email address');
+    const user = await User.findOne({ email });
+    if (!user) throw new NotFoundError(NOT_FOUND_MESSAGE);
+
+    const newToken = await signToken({ user_id: user._id });
+    await sendPasswordResetMail(email, newToken);
+    res
+      .status(SC.OK)
+      .send({ data: { status: 'success', message: 'Check your mail box' } });
+  }
+});
+
 module.exports = {
   deleteUser,
   getAllUsers,
   getUser,
   getUserAvatar,
+  resetPassword,
   updateUser,
   updateUserAvatar,
   updateUserPassword,
