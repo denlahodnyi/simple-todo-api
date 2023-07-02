@@ -10,7 +10,7 @@
 - [ ] Tests
 ## Extra
 - [x] Email verification
-- [ ] Password reset
+- [x] Password reset
 - [x] Generate user_name
 - [ ] API linter (if exists)
 - [ ] Typescript

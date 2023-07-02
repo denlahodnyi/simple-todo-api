@@ -13,5 +13,6 @@ module.exports = {
     'no-unused-vars': 1,
     'no-underscore-dangle': 0,
     'max-classes-per-file': 0,
+    'import/no-extraneous-dependencies': 0,
   },
 };

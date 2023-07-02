@@ -9,6 +9,7 @@ const { authMw } = require('../middlewares/authMiddleware');
 const {
   createTask,
   deleteTask,
+  downloadTasks,
   getAllTasks,
   getTask,
   updateTask,
@@ -65,6 +66,7 @@ const avatarUpload = multer({
 
 // Tasks routes
 router.route('/tasks/').get(authMw(), getAllTasks).post(authMw(), createTask);
+router.route('/tasks/download').post(authMw(), downloadTasks);
 router
   .route('/tasks/:task_id')
   .get(authMw(), getTask)

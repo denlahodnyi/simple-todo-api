@@ -14,7 +14,7 @@ const { apiLimiter } = require('./middlewares/rateLimiters');
 const { PORT } = process.env;
 
 // enable CORS
-// app.use(cors());
+app.use(cors());
 // security-related HTTP response headers
 // app.use(helmet());
 // adds a X-Response-Time header to responses

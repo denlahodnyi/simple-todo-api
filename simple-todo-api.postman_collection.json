@@ -164,7 +164,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"Cacao time\",\n    \"description\": \"Make cacao with cookies\",\n    \"tags\": [\"relax\", \"cooking\"]\n}",
+							"raw": "{\n    \"title\": \"My 2 task\",\n    \"description\": \"Delete TODO list\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -245,6 +245,54 @@
 									"key": "task_id",
 									"value": null
 								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Download tasks in .csv",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// pm.globals.set(\"PapaLib\", responseBody);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"ids\": [\n        \"645381da24e96076292e21ae\",\n        \"648b39a8ea9e872a66f2c739\",\n        \"6454bfb05b4f6f6fc7f755c4\",\n        \"646e176c8cabbdaa86d7fc16\"\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URI}}/tasks/download",
+							"host": [
+								"{{URI}}"
+							],
+							"path": [
+								"tasks",
+								"download"
 							]
 						}
 					},
@@ -475,7 +523,7 @@
 							"variable": [
 								{
 									"key": "user_id",
-									"value": "6495780ad012ba8a4541a61d"
+									"value": "647623e8335475349482f734"
 								}
 							]
 						}
@@ -527,6 +575,64 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Reset password (request)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"devdev1@gmail.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URI}}/password-reset",
+							"host": [
+								"{{URI}}"
+							],
+							"path": [
+								"password-reset"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reset password (new password)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"password\": \"Qwerty123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URI}}/password-reset?token=",
+							"host": [
+								"{{URI}}"
+							],
+							"path": [
+								"password-reset"
+							],
+							"query": [
+								{
+									"key": "token",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -558,7 +664,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"devdev3@gmail.com\",\n    \"password\": \"Qwerty123\"\n}",
+							"raw": "{\n    \"email\": \"devdev3@g.com\",\n    \"password\": \"Qwerty123\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"

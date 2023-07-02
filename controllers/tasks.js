@@ -1,10 +1,12 @@
 const { StatusCodes: SC } = require('http-status-codes');
+const { stringify } = require('csv-stringify');
 const Task = require('../models/Task');
 const {
   asyncWrapper,
   getRequestUrl,
   getPaginationLinks,
   NotFoundError,
+  BadRequestError,
 } = require('../utils');
 
 const NOT_FOUND_MESSAGE = 'Task not found';
@@ -122,4 +124,60 @@ const deleteTask = asyncWrapper(async (req, res) => {
   });
 });
 
-module.exports = { getAllTasks, getTask, createTask, updateTask, deleteTask };
+const downloadTasks = asyncWrapper(async (req, res) => {
+  const { ids } = req.body;
+
+  if (!ids || ids.length === 0) {
+    throw new BadRequestError('Ids must not be empty');
+  }
+
+  const tasks = await Task.find({
+    _id: { $in: ids },
+    user_id: req.user.user_id,
+  });
+
+  if (!tasks) {
+    throw new NotFoundError('No tasks were found');
+  }
+
+  const stringifier = stringify({
+    header: true,
+    columns: {
+      title: 'Title',
+      completed: 'Completed',
+      color: 'Color',
+      description: 'Description',
+      createdAt: 'Created at',
+    },
+  });
+
+  res.attachment('tasks.csv');
+  res.set('Content-Type', 'text/csv');
+  stringifier.pipe(res);
+
+  stringifier.on('error', (err) => {
+    console.error('.csv stream error ', err.message);
+  });
+  stringifier.on('end', () => {
+    console.log('.csv stream end');
+  });
+
+  tasks.forEach((task) => {
+    stringifier.write({
+      ...task.toObject(),
+      completed: task.completed ? 'Yes' : 'No',
+      createdAt: new Date(task.createdAt).toDateString(),
+    });
+  });
+
+  stringifier.end();
+});
+
+module.exports = {
+  createTask,
+  deleteTask,
+  downloadTasks,
+  getAllTasks,
+  getTask,
+  updateTask,
+};
