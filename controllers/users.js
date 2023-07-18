@@ -32,7 +32,6 @@ const getAllUsers = asyncWrapper(async (req, res) => {
 
   if (userName) filterBy.user_name = userName;
 
-  // const query = User.find({ ...filterBy }, DISABLED_PRIVATE_USER_FIELDS);
   const query = User.find({ ...filterBy }).excludePrivateFields();
   const totalItems = await query.clone().countDocuments().lean();
   const users = await query.skip(offset).limit(limit).sort(sortQuery).lean();

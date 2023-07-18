@@ -41,7 +41,9 @@ const formatErrors = (errorsObj) => {
 };
 
 const errorMiddleware = (err, req, res, next) => {
-  console.log(`⚠️  ${err}`);
+  if (process.NODE_ENV === 'development' || process.NODE_ENV === 'test') {
+    console.log(`⚠️  ${err}`);
+  }
   const parsedErr = parseError(err);
   const code = parsedErr.code || SC.INTERNAL_SERVER_ERROR;
   const errors = err.errors ? formatErrors(err.errors) : null;

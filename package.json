@@ -1,19 +1,26 @@
 {
   "name": "simple-todo-api",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "app.js",
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "nodemon index.js"
+    "start": "nodemon server.js",
+    "test:dev": "NODE_ENV=test mocha --ignore ./tests/e2e/**/*.test.js",
+    "test:e2e": "NODE_ENV=test mocha --require ./tests/fixtures.cjs --require ./tests/hooks/rootHooks.js --ignore ./tests/unit/*"
   },
   "devDependencies": {
+    "chai": "^4.3.7",
     "eslint": "^7.32.0 || ^8.2.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-import": "^2.25.2",
+    "mocha": "^10.2.0",
+    "mongodb-memory-server": "^8.13.0",
     "nodemon": "^2.0.21",
-    "prettier": "2.8.8"
+    "prettier": "2.8.8",
+    "sinon": "^15.2.0",
+    "supertest": "^6.3.3"
   },
   "dependencies": {
     "bcrypt": "^5.1.0",

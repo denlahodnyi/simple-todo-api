@@ -40,10 +40,10 @@ const dictionary = {
 module.exports = (email) => {
   const { nouns, adjectives } = dictionary;
   const hash = String(SHA256(email));
-  const noun = nouns[getRandomInt(0, nouns.length)];
+  const noun = nouns[getRandomInt(0, nouns.length - 1)];
   const maxAdjLength = USERNAME_LENGTH - noun.length - 1; // get valid adjective max length to pass validation. 1 - is underscore char
   const adjective = adjectives.filter((adj) => adj.length <= maxAdjLength)[
-    getRandomInt(0, adjectives.length)
+    getRandomInt(0, adjectives.length - 1)
   ];
   return `${adjective}_${noun}${hash.slice(0, HASH_PART_LENGTH)}`;
 };

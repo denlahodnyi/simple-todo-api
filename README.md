@@ -6,8 +6,8 @@
 - [x] Add pagination
 - [x] Add auth
 - [ ] Add Swagger docs
-- [ ] Mocks
-- [ ] Tests
+- [x] Mocks
+- [x] Tests
 ## Extra
 - [x] Email verification
 - [x] Password reset
