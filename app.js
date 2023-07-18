@@ -1,17 +1,25 @@
-require('dotenv').config();
+require('dotenv').config({ debug: true });
+const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const responseTime = require('response-time');
 
+const { NODE_ENV } = process.env;
+
+if (NODE_ENV !== 'development') {
+  // eslint-disable-next-line global-require
+  require('dotenv').config({
+    path: path.resolve(`.env.${NODE_ENV}`),
+    override: true,
+  });
+}
+
 const app = express();
 const router = require('./routes');
-const connectDB = require('./db/connect');
 const errorMiddleware = require('./middlewares/errorsMiddleware');
 const { apiLimiter } = require('./middlewares/rateLimiters');
-
-const { PORT } = process.env;
 
 // enable CORS
 app.use(cors());
@@ -24,24 +32,15 @@ app.use(express.json());
 // for parsing application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
 // logger
-app.use(
-  morgan('-> :method :url :status :res[content-length] – :response-time ms')
-);
+if (NODE_ENV !== 'test') {
+  app.use(
+    morgan('-> :method :url :status :res[content-length] – :response-time ms')
+  );
+}
 
-app.use(`/api/v1/`, apiLimiter, router, (req, res) => {
+app.use('/api/v1/', apiLimiter, router, (req, res) => {
   res.status(404).send('Not Found');
 });
 app.use(errorMiddleware);
 
-const start = async () => {
-  try {
-    await connectDB();
-    app.listen(PORT || 3000, () => {
-      console.log('🚀 App is listening on port 3000');
-    });
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-start();
+module.exports = app;

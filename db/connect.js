@@ -1,11 +1,19 @@
 const mongoose = require('mongoose');
+const getUri = require('./helpers/getUri');
 
-const { USER_NAME, PASSWORD, DB_NAME, CLUSTER_NAME } = process.env;
-
-const uri = `mongodb+srv://${USER_NAME}:${PASSWORD}@${CLUSTER_NAME}/${DB_NAME}?retryWrites=true&w=majority`;
+const connectionStatus = {
+  0: 'disconnected',
+  1: 'connected',
+  2: 'connecting',
+  3: 'disconnecting',
+};
 
 const connect = async () => {
-  return mongoose.connect(uri);
+  const mongooseInstance = await mongoose.connect(getUri());
+  console.log(
+    `🗄️  DB: ${connectionStatus[mongooseInstance.connection.readyState]}`
+  );
+  return mongooseInstance;
 };
 
 module.exports = connect;

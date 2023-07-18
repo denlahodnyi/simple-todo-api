@@ -1,5 +1,6 @@
 # Custom
 uploads
+.env.test
 
 # General
 .DS_Store
