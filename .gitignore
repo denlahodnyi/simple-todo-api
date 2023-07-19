@@ -1,6 +1,7 @@
 # Custom
 uploads
 .env.test
+.env.production
 
 # General
 .DS_Store
